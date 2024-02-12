@@ -1,6 +1,6 @@
 import { Inter } from "next/font/google";
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import axios from '../plugins/axios';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,9 +21,20 @@ export default function Home() {
         <div key={index}>
           <div>{condition.id}</div>
           <div>{condition.detail}</div>
-          <div>{condition.occurred_date}</div>
+          <div>{condition.occurredDate}</div>
         </div>
       ))}
+
+      <div>
+        <button onClick={() => {
+          axios.post('http://localhost:3000/api/v1/conditions', {
+            detail: 'テスト',
+            occurredDate: '2021-01-01'
+          }).then((response) => {
+            console.log(response);
+          });
+        }}>追加</button>
+      </div>
     </div>
   );
 }
