@@ -1,6 +1,7 @@
 import { Inter } from "next/font/google";
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import Link from 'next/link'
+import axios from '../plugins/axios';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,13 +18,8 @@ export default function Home() {
 
   return (
     <div>
-      {conditions.map((condition, index) => (
-        <div key={index}>
-          <div>{condition.id}</div>
-          <div>{condition.detail}</div>
-          <div>{condition.occurred_date}</div>
-        </div>
-      ))}
+      <div>トップ画面です</div>
+      <Link href="/conditions">体調一覧</Link>
     </div>
   );
 }
