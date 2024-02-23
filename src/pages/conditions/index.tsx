@@ -23,14 +23,14 @@ export default function Home() {
       <div>Condition一覧</div>
       {conditions.map((condition, index) => (
         // conditionの方を作成する
-        <div key={index}>
+        <div key={index} className="mb-8">
           <div>{condition.id}</div>
           <div>{condition.detail}</div>
           {/* このエラーはわからん */}
           <div>{condition.occurredDate}</div>
         </div>
       ))}
-      <Link href="/conditions/new">新規作成</Link>
+      <Link href="/conditions/new" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">新規作成</Link>
     </div>
   );
 }
