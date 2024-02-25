@@ -9,7 +9,6 @@ const inter = Inter({ subsets: ["latin"] });
 export default function Home() {
   const [condition, setConditions] = useState(new Condition());
 
-
   return (
     <div>
       <h2 className="mb-8">新規作成</h2>
