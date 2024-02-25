@@ -5,9 +5,16 @@ export default function Signin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
+  const [isError, setIsError] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   return (
     <div>
+      {isError ? (
+        <div className="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+          <span className="font-medium">{errorMessage}</span>
+        </div>
+      ) : null}
       <h2>ユーザー作成</h2>
 
       <section className="mb-8">
@@ -41,6 +48,11 @@ export default function Signin() {
           passwordConfirmation: passwordConfirmation
         }).then((response) => {
           console.log(response);
+          // ログイン画面に遷移しているが、メール認証を実装したら調整する
+          window.location.href = '/auth/login';
+        }).catch((error) => {
+          setIsError(true);
+          setErrorMessage(error.response.data.errors[0]);
         })
       }}>ユーザー作成</button>
     </div>
