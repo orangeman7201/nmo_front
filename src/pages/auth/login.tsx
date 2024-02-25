@@ -1,8 +1,15 @@
 import axios from '../../plugins/axios';
-import { setCookie, deleteCookie } from 'cookies-next';
+import { setCookie, getCookie, deleteCookie } from 'cookies-next';
 import { useState } from 'react';
 
-export default function Signin() {
+// トークンがある場合はconditionsにリダイレクトする。
+// 万が一access_tokenが異なっている場合はバックエンド側でエラーが発生してログイン画面に遷移する
+const token = getCookie('access-token');
+if (token) {
+  window.location.href = '/conditions'
+}
+
+export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isError, setIsError] = useState<boolean>(false);
@@ -35,10 +42,13 @@ export default function Signin() {
         </div>
       </section>
 
+      {/* tyoeErrorをなんとかしたいね〜 */}
       <button onClick={() => {
         axios.post('/auth/sign_in', {
           email: email,
           password: password
+        }, {
+          ignoreGlobalCatch: true
         }).then((response) => {
           setCookie('uid', response.headers["uid"])
           setCookie('client', response.headers["client"])
