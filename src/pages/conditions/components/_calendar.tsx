@@ -46,10 +46,27 @@ const calendarByWeek = (targetMonth: string) => {
   return calendarByWeek;
 }
 
+// 一ヶ月前の月に遷移する
+// urlパラメータにセットしてリダイレクトする
+const prevMonth = (targetMonth: string) => {
+  const prevMonth = dayjs(targetMonth).subtract(1, 'month').startOf('month').format('YYYY-MM-DD');
+  window.location.href = `?targetMonth=${prevMonth}`;
+}
+
+const nextMonth = (targetMonth: string) => {
+  const nextMonth = dayjs(targetMonth).add(1, 'month').startOf('month').format('YYYY-MM-DD');
+  window.location.href = `?targetMonth=${nextMonth}`;
+}
+
 export default function Calendar({ targetMonth }: { targetMonth: string }) {
   return (
     <div>
       <div>{dayjs(targetMonth).format('YYYY年MM月')}</div>
+      <div>
+        <button onClick={() => prevMonth(targetMonth)}>前月</button>
+        <button onClick={() => nextMonth(targetMonth)}>次月</button>
+      </div>
+
       <div className="calendar">
         <div className="day">
           <div className="sunday">日</div>
