@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import axios from '../../plugins/axios';
 import Link from 'next/link';
 import Condition from '../../forms/conditions';
+import Calendar from './components/_calendar';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,16 +22,10 @@ export default function Home() {
   return (
     <div>
       <div>Condition一覧</div>
-      {conditions.map((condition, index) => (
-        // conditionの方を作成する
-        <div key={index} className="mb-8">
-          <div>{condition.id}</div>
-          <div>{condition.detail}</div>
-          {/* このエラーはわからん */}
-          <div>{condition.occurredDate}</div>
-        </div>
-      ))}
-      <Link href="/conditions/new" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">新規作成</Link>
+      {/* デフォルトで当月のカレンダーを表示 */}
+      {/* 次の月を押すと次の月のカレンダーが表示される */}
+      <Calendar targetMonth={"2024-03-01"} />
+      {/* <Link href="/conditions/new" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">新規作成</Link> */}
     </div>
   );
 }
