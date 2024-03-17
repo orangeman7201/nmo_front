@@ -1,7 +1,6 @@
 
 import dayjs, { Dayjs } from "dayjs";
 
-
 // 日付を配列で保存する関数
 const calendarByWeek = (targetMonth: string) => {
   const startDate: Dayjs = dayjs(targetMonth);
@@ -50,16 +49,27 @@ const calendarByWeek = (targetMonth: string) => {
 export default function Calendar({ targetMonth }: { targetMonth: string }) {
   return (
     <div>
-      <div className="mb-8">カレンダーです</div>
-      <div>targetMonth: {targetMonth}</div>
-      <div>calendar:
-        {calendarByWeek(targetMonth).map((week, index) => (
-          <div key={index}>
-            {week.map(date => (
-              <div key={date.format('YYYY-MM-DD')}>{date.format('YYYY-MM-DD')}</div>
-            ))}
-          </div>
-        ))}
+      <div>{dayjs(targetMonth).format('YYYY年MM月')}</div>
+      <div className="calendar">
+        <div className="day">
+          <div className="sunday">日</div>
+          <div>月</div>
+          <div>火</div>
+          <div>水</div>
+          <div>木</div>
+          <div>金</div>
+          <div className="saturday">土</div>
+        </div>
+        {/* 週の表示 */}
+        <div className="week">
+          {calendarByWeek(targetMonth).map((week, index) => (
+            <div key={index} className="date">
+              {week.map(date => (
+                <div key={date.format('YYYY-MM-DD')}>{date.format('DD')}</div>
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
