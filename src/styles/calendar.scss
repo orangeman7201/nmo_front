@@ -1,0 +1,39 @@
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: repeat(6, 1fr);
+
+  .day {
+    display: contents;
+    padding: 10px;
+    border: 1px solid #000;
+
+    .sunday {
+      color: red;
+    }
+
+    .saturday {
+      color: blue;
+    }
+  }
+
+  .week {
+    display: contents;
+    padding: 10px;
+    border: 1px solid #000;
+  }
+
+  .date {
+    display: contents;
+    padding: 10px;
+    border: 1px solid #000;
+
+    .cell {
+      height: 20px;
+    }
+
+    .grey {
+      color: lightgray;
+    }
+  }
+}

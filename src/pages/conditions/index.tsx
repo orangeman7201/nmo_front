@@ -1,16 +1,25 @@
 import { Inter } from "next/font/google";
 import { useEffect, useState } from 'react';
 import axios from '../../plugins/axios';
-import Link from 'next/link';
 import Condition from '../../forms/conditions';
+import Calendar from './components/_calendar';
+import dayjs from "dayjs";
 
 const inter = Inter({ subsets: ["latin"] });
+
+// urlパラメータからtargetMonthを取得する
+const getTargetMonth = () => {
+  const query = new URLSearchParams(window.location.search);
+  const targetMonth = query.get('targetMonth');
+  return targetMonth ? targetMonth : dayjs().format('YYYY-MM-DD');
+}
 
 // Todo: このfunctionを修正する
 export default function Home() {
   const [conditions, setConditions] = useState(Array<Condition>);
   useEffect(() => {
-    axios.get('http://localhost:3000/api/v1/conditions').then((response) => {
+    // なぜかキャメルケースに変換されないので後ほど修正する
+    axios.get('conditions', { params: { target_month: getTargetMonth() } } ).then((response) => {
       setConditions(response.data);
     });
   }, [])
@@ -21,16 +30,10 @@ export default function Home() {
   return (
     <div>
       <div>Condition一覧</div>
-      {conditions.map((condition, index) => (
-        // conditionの方を作成する
-        <div key={index} className="mb-8">
-          <div>{condition.id}</div>
-          <div>{condition.detail}</div>
-          {/* このエラーはわからん */}
-          <div>{condition.occurredDate}</div>
-        </div>
-      ))}
-      <Link href="/conditions/new" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">新規作成</Link>
+      {/* デフォルトで当月のカレンダーを表示 */}
+      {/* 次の月を押すと次の月のカレンダーが表示される */}
+      <Calendar targetMonth={getTargetMonth()} conditions={conditions} />
+      {/* <Link href="/conditions/new" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">新規作成</Link> */}
     </div>
   );
 }
