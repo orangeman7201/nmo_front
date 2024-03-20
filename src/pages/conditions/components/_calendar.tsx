@@ -1,9 +1,10 @@
 
 import dayjs, { Dayjs } from "dayjs";
+import Condition from '@/forms/conditions';
 
 // 日付を配列で保存する関数
 const calendarByWeek = (targetMonth: string) => {
-  const startDate: Dayjs = dayjs(targetMonth);
+  const startDate: Dayjs = dayjs(targetMonth).startOf('month');
   const endDate = startDate.endOf('month');
   const monthDates = [];
   let currentDate = startDate;
@@ -53,18 +54,25 @@ const prevMonth = (targetMonth: string) => {
   window.location.href = `?targetMonth=${prevMonth}`;
 }
 
+// 一ヶ月後の月に遷移する
+// urlパラメータにセットしてリダイレクトする
 const nextMonth = (targetMonth: string) => {
   const nextMonth = dayjs(targetMonth).add(1, 'month').startOf('month').format('YYYY-MM-DD');
   window.location.href = `?targetMonth=${nextMonth}`;
 }
 
-export default function Calendar({ targetMonth }: { targetMonth: string }) {
+// 日付がtargetMonthと同じ月かどうかを判定する
+const inTargetMonth = (date: Dayjs, targetMonth: string) => {
+  return date.format('YYYY-MM') === dayjs(targetMonth).format('YYYY-MM');
+}
+
+export default function Calendar(props: { targetMonth: string, conditions: Array<Condition> }) {
   return (
     <div>
-      <div>{dayjs(targetMonth).format('YYYY年MM月')}</div>
+      <div>{dayjs(props.targetMonth).format('YYYY年MM月')}</div>
       <div>
-        <button onClick={() => prevMonth(targetMonth)}>前月</button>
-        <button onClick={() => nextMonth(targetMonth)}>次月</button>
+        <button onClick={() => prevMonth(props.targetMonth)}>前月</button>
+        <button onClick={() => nextMonth(props.targetMonth)}>次月</button>
       </div>
 
       <div className="calendar">
@@ -79,10 +87,13 @@ export default function Calendar({ targetMonth }: { targetMonth: string }) {
         </div>
         {/* 週の表示 */}
         <div className="week">
-          {calendarByWeek(targetMonth).map((week, index) => (
+          {calendarByWeek(props.targetMonth).map((week, index) => (
             <div key={index} className="date">
               {week.map(date => (
-                <div key={date.format('YYYY-MM-DD')}>{date.format('DD')}</div>
+                <div key={date.format('YYYY-MM-DD')}>
+                  <div className={ `cell ${inTargetMonth(date, props.targetMonth) ? '' : 'grey'}`}>{date.format('D')}</div>
+                  {props.conditions.filter((c: Condition) => dayjs(c.occurredDate).date() === dayjs(date).date()).length > 0 &&<div>・</div>}
+                </div>
               ))}
             </div>
           ))}

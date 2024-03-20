@@ -27,5 +27,13 @@
     display: contents;
     padding: 10px;
     border: 1px solid #000;
+
+    .cell {
+      height: 20px;
+    }
+
+    .grey {
+      color: lightgray;
+    }
   }
 }
