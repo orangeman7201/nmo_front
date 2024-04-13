@@ -2,6 +2,7 @@
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   grid-template-rows: repeat(6, 1fr);
+  justify-items: center;
 
   .day {
     display: contents;
@@ -29,7 +30,10 @@
     border: 1px solid #000;
 
     .cell {
-      height: 20px;
+      height: 64px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     .grey {

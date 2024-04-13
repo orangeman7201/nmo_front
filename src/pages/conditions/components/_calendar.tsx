@@ -90,8 +90,8 @@ export default function Calendar(props: { targetMonth: string, conditions: Array
           {calendarByWeek(props.targetMonth).map((week, index) => (
             <div key={index} className="date">
               {week.map(date => (
-                <div key={date.format('YYYY-MM-DD')}>
-                  <div className={ `cell ${inTargetMonth(date, props.targetMonth) ? '' : 'grey'}`}>{date.format('D')}</div>
+                <div key={date.format('YYYY-MM-DD')} className={ `cell ${inTargetMonth(date, props.targetMonth) ? '' : 'grey'}`}>
+                  <div>{date.format('D')}</div>
                   {props.conditions.filter((c: Condition) => dayjs(c.occurredDate).date() === dayjs(date).date()).length > 0 &&<div>・</div>}
                 </div>
               ))}
