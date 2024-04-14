@@ -4,7 +4,7 @@ import axios from '../../plugins/axios';
 import Condition from '../../forms/conditions';
 import Calendar from './components/_calendar';
 import ConditionModal from './components/_condition_modal';
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,10 +18,10 @@ const getTargetMonth = () => {
 export default function Home() {
   const [conditions, setConditions] = useState(Array<Condition>);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalDate, setModalDate] = useState<dayjs.Dayjs | null>(null);
+  const [modalDate, setModalDate] = useState<Dayjs | null>(null);
 
   // Q. ここで関数を定義してもいいのか？
-  const openModal = (date: dayjs.Dayjs) => {
+  const openModal = (date: Dayjs) => {
     setIsModalOpen(true);
     setModalDate(date);
   }

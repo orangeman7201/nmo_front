@@ -1,11 +1,11 @@
 
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { useState } from 'react';
 import Condition from '../../../forms/conditions';
 import axios from '../../../plugins/axios';
 
 export default function ConditionModal(props: { date: Dayjs | null, closeModal: () => void }) {
-  const [condition, setConditions] = useState(new Condition())
+  const [condition, setConditions] = useState(new Condition({occurredDate: props.date?.format('YYYY-MM-DD') || dayjs().format('YYYY-MM-DD')}))
 
   return (
     <div className="modal">
@@ -34,9 +34,14 @@ export default function ConditionModal(props: { date: Dayjs | null, closeModal: 
                 </svg>
               </div>
               <input onChange={(e) => {
-                setConditions({...condition, occurredDate: new Date(e.target.value)})
-              }}
-              id="occurred-date" type="date" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="症状が起こった日付" />
+                  setConditions({...condition, occurredDate: dayjs(e.target.value).format('YYYY-MM-DD')})
+                }}
+                value={condition.occurredDate}
+                id="occurred-date"
+                type="date"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="症状が起こった日付"
+              />
             </div>
           </div>
         </section>
@@ -46,7 +51,6 @@ export default function ConditionModal(props: { date: Dayjs | null, closeModal: 
             className="condition_modal__button"
             onClick={() => {
               axios.post('/conditions', condition).then((response) => {
-                      // 一覧画面にリダイレクト
                       window.location.href = '/conditions';
                     }).catch((error) => {
                       console.error(error);
