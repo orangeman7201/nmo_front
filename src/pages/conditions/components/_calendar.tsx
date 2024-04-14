@@ -66,7 +66,7 @@ const inTargetMonth = (date: Dayjs, targetMonth: string) => {
   return date.format('YYYY-MM') === dayjs(targetMonth).format('YYYY-MM');
 }
 
-export default function Calendar(props: { targetMonth: string, conditions: Array<Condition> }) {
+export default function Calendar(props: { openModal: (date: dayjs.Dayjs) => void, targetMonth: string, conditions: Array<Condition> }) {
   return (
     <div>
       <div>{dayjs(props.targetMonth).format('YYYY年MM月')}</div>
@@ -90,10 +90,14 @@ export default function Calendar(props: { targetMonth: string, conditions: Array
           {calendarByWeek(props.targetMonth).map((week, index) => (
             <div key={index} className="date">
               {week.map(date => (
-                <div key={date.format('YYYY-MM-DD')}>
-                  <div className={ `cell ${inTargetMonth(date, props.targetMonth) ? '' : 'grey'}`}>{date.format('D')}</div>
+                <button
+                  key={date.format('YYYY-MM-DD')}
+                  className={ `cell ${inTargetMonth(date, props.targetMonth) ? '' : 'grey'}`}
+                  onClick={() => props.openModal(date)}
+                >
+                  <div>{date.format('D')}</div>
                   {props.conditions.filter((c: Condition) => dayjs(c.occurredDate).date() === dayjs(date).date()).length > 0 &&<div>・</div>}
-                </div>
+                </button>
               ))}
             </div>
           ))}
