@@ -24,7 +24,7 @@ export default function ConditionModal(props: { date: Dayjs | null, closeModal: 
               }}
               type="text" id="detail" className="condition_modal__input" placeholder="体調を入力してください" required />
           </div>
-          <div>
+          <div className="mb-8">
             <label htmlFor="occurred-date" className="condition_modal__label">症状が起こった日付</label>
             {/* カレンダーのところだけbootを使う */}
             <div className="relative max-w-sm">
@@ -43,6 +43,30 @@ export default function ConditionModal(props: { date: Dayjs | null, closeModal: 
                 placeholder="症状が起こった日付"
               />
             </div>
+          </div>
+          <div className="mb-8">
+            <label htmlFor="strength" className="condition_modal__label">強さ</label>
+            <input onChange={(e) => {
+                setConditions({...condition, strength: Number(e.target.value)})
+              }}
+              type="number"
+              id="strength"
+              className="condition_modal__input"
+              placeholder="強さを入力してください"
+              min="0"
+              max="10"
+              value={condition.strength}
+              required />
+          </div>
+          <div>
+            <label htmlFor="memo" className="condition_modal__label">メモ</label>
+            <textarea onChange={(e) => {
+                setConditions({...condition, memo: e.target.value})
+              }}
+              id="memo"
+              className="condition_modal__input"
+              placeholder="メモを入力してください"
+              value={condition.memo} />
           </div>
         </section>
 
