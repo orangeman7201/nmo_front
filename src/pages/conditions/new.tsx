@@ -1,5 +1,5 @@
 import { Inter } from "next/font/google";
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import axios from '../../plugins/axios';
 import Condition from '../../forms/conditions';
 import Link from 'next/link'
