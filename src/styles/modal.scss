@@ -37,6 +37,18 @@
 
       &__title {
         font-size: 1.5rem;
+
+        button {
+          border: none;
+          cursor: pointer;
+          border-radius: 4px;
+          padding: 4px;
+
+          &.active {
+            background-color: lightskyblue;
+            color: white;
+          }
+        }
       }
 
       &__close {
