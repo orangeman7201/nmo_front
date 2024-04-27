@@ -31,9 +31,14 @@
 
     .cell {
       height: 64px;
+      width: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
+
+      &.has-hospital-appointment {
+        border: 1px solid lightblue;
+      }
     }
 
     .grey {

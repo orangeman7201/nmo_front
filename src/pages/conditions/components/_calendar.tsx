@@ -1,6 +1,7 @@
 
 import dayjs, { Dayjs } from "dayjs";
 import Condition from '@/forms/conditions';
+import HospitalAppointment from '@/forms/hospital_appointments';
 
 // 日付を配列で保存する関数
 const calendarByWeek = (targetMonth: string) => {
@@ -66,7 +67,23 @@ const inTargetMonth = (date: Dayjs, targetMonth: string) => {
   return date.format('YYYY-MM') === dayjs(targetMonth).format('YYYY-MM');
 }
 
-export default function Calendar(props: { openModal: (date: dayjs.Dayjs) => void, targetMonth: string, conditions: Array<Condition> }) {
+const hasCondition = (date: Dayjs, conditions: Array<Condition>) => {
+  return conditions.filter((c: Condition) => dayjs(c.occurredDate).date() === dayjs(date).date()).length > 0;
+}
+
+// 日付に診察日があるかどうかを判定する
+const hasHospitalAppointment = (date: Dayjs, hospitalAppointments: Array<HospitalAppointment>) => {
+  return hospitalAppointments.filter((ha: HospitalAppointment) => dayjs(ha.consultationDate).date() === dayjs(date).date()).length > 0;
+}
+
+interface Props {
+  openModal: (date: Dayjs) => void;
+  targetMonth: string;
+  conditions: Array<Condition>;
+  hospitalAppointments: Array<HospitalAppointment>;
+}
+
+export default function Calendar(props: Props) {
   return (
     <div>
       <div>{dayjs(props.targetMonth).format('YYYY年MM月')}</div>
@@ -92,11 +109,11 @@ export default function Calendar(props: { openModal: (date: dayjs.Dayjs) => void
               {week.map(date => (
                 <button
                   key={date.format('YYYY-MM-DD')}
-                  className={ `cell ${inTargetMonth(date, props.targetMonth) ? '' : 'grey'}`}
+                  className={ `cell ${inTargetMonth(date, props.targetMonth) ? '' : 'grey'} ${hasHospitalAppointment(date, props.hospitalAppointments) ? 'has-hospital-appointment' : ''}` }
                   onClick={() => props.openModal(date)}
                 >
                   <div>{date.format('D')}</div>
-                  {props.conditions.filter((c: Condition) => dayjs(c.occurredDate).date() === dayjs(date).date()).length > 0 &&<div>・</div>}
+                  {hasCondition(date, props.conditions) &&<div>・</div>}
                 </button>
               ))}
             </div>
