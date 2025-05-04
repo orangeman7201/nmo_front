@@ -6,41 +6,40 @@ import HospitalAppointment from '../../forms/hospital_appointments';
 import Calendar from './components/_calendar';
 import Modal from './components/_modal';
 import dayjs, { Dayjs } from "dayjs";
+import { useRouter } from 'next/router';
 
 const inter = Inter({ subsets: ["latin"] });
 
-// urlパラメータからtargetMonthを取得する
-const getTargetMonth = () => {
-  const query = new URLSearchParams(window.location.search);
-  const targetMonth = query.get('targetMonth');
-  return targetMonth ? targetMonth : dayjs().format('YYYY-MM-DD');
-}
-
-// 体調の新規作成
-const createCondition = (condition: Condition) => {
-  axios.post('conditions', { condition }).then((response) => {
-    window.location.href = '/conditions';
-  }).catch((error) => {
-    console.log(error);
-  })
-}
-
-// 病院予約の新規作成
-const createHospitalAppointment = (hospitalAppointment: HospitalAppointment) => {
-  axios.post('hospital_appointments', { hospital_appointment: hospitalAppointment }).then((response) => {
-    window.location.href = '/conditions';
-  }).catch((error) => {
-    console.log(error);
-  })
-}
-
 export default function Home() {
+  const router = useRouter();
+
+  // コンポーネント内に移動
+  const createCondition = (condition: Condition) => {
+    axios.post('conditions', { condition }).then((response) => {
+      router.push('/conditions'); // window.location.hrefの代わりにrouter.pushを使用
+    }).catch((error) => {
+      console.log(error);
+    })
+  }
+
+  const createHospitalAppointment = (hospitalAppointment: HospitalAppointment) => {
+    axios.post('hospital_appointments', { hospital_appointment: hospitalAppointment }).then((response) => {
+      router.push('/conditions');
+    }).catch((error) => {
+      console.log(error);
+    })
+  }
+
+  const getTargetMonth = () => {
+    const { targetMonth } = router.query;
+    return typeof targetMonth === 'string' ? targetMonth : dayjs().format('YYYY-MM-DD');
+  }
+
   const [conditions, setConditions] = useState(Array<Condition>);
   const [hospitalAppointment, setHospitalAppointments] = useState(Array<HospitalAppointment>);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalDate, setModalDate] = useState<Dayjs | null>(null);
 
-  // Q. ここで関数を定義してもいいのか？
   const openModal = (date: Dayjs) => {
     setIsModalOpen(true);
     setModalDate(date);
@@ -55,9 +54,6 @@ export default function Home() {
       setHospitalAppointments(response.data);
     });
   }, [])
-
-  // conditionsがnullの場合はnullを返却
-  if (!conditions.length) return null;
 
   return (
     <div>
