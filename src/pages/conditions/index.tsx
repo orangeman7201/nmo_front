@@ -56,8 +56,8 @@ export default function Home() {
   }, [])
 
   return (
-    <div>
-      <div>Condition一覧</div>
+    <div className="container mx-auto p-4 pb-20">
+      <div className="text-2xl font-bold mb-4">Condition一覧</div>
       {/* デフォルトで当月のカレンダーを表示 */}
       {/* 次の月を押すと次の月のカレンダーが表示される */}
       <Calendar

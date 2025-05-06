@@ -31,7 +31,7 @@ instance.interceptors.response.use(
   error => {
     // グローバルなエラーハンドリング。configにignoreGlobalCatchがある場合はエラーハンドリングを無視する
     if (!error.config.ignoreGlobalCatch) {
-      if (error.response.status === 401) {
+      if (error.response && error.response.status === 401) {
         deleteCookie('uid')
         deleteCookie('client')
         deleteCookie('access-token')
