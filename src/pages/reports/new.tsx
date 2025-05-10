@@ -55,7 +55,7 @@ export default function CreateReport() {
       setSubmitting(true);
       await axios.post('consultation_reports', {
         consultation_report: {
-          hospital_appointment_id: appointment_id,
+          hospital_appointment_id: Number(appointment_id),
           consultation_memo: consultationMemo
         }
       });
