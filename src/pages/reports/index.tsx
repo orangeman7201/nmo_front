@@ -51,7 +51,7 @@ export default function Reports() {
   };
 
   const handleCreateReport = (appointmentId: number) => {
-    router.push(`/reports/create?appointment_id=${appointmentId}`);
+    router.push(`/reports/new?appointment_id=${appointmentId}`);
   };
 
   const handleViewReport = (reportId: number) => {
