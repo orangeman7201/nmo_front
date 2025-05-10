@@ -54,8 +54,15 @@ export default function EditReport() {
       try {
         setLoading(true);
         const response = await axios.get(`consultation_reports/${id}`);
+        console.log('レポートデータ:', response.data);
         setReport(response.data);
-        setConsultationMemo(response.data.consultation_memo || '');
+        if (response.data && response.data.consultationMemo !== undefined) {
+          console.log('設定するメモ:', response.data.consultationMemo);
+          setConsultationMemo(response.data.consultationMemo);
+        } else {
+          console.log('メモが見つかりません');
+          setConsultationMemo('');
+        }
       } catch (error) {
         console.error('レポートの取得に失敗しました:', error);
         setError('レポートの取得に失敗しました。');
@@ -71,47 +78,74 @@ export default function EditReport() {
 
   useEffect(() => {
     const fetchPreviousConditions = async () => {
-      if (!report || !report.hospital_appointment || !report.hospital_appointment.consultationDate) return;
+      if (!report || !report.hospital_appointment_id) {
+        console.log('レポートまたは来院情報が不足しています:', report);
+        setConditionsLoading(false);
+        return;
+      }
       
       try {
         setConditionsLoading(true);
+        console.log('来院予定を取得中...');
+        
+        const currentAppointmentResponse = await axios.get(`hospital_appointments/${report.hospital_appointment_id}`);
+        const currentAppointment = currentAppointmentResponse.data;
+        console.log('現在の来院予定:', currentAppointment);
+        
+        if (!currentAppointment || !currentAppointment.consultationDate) {
+          console.log('現在の来院予定の日付が見つかりません');
+          setConditionsLoading(false);
+          return;
+        }
         
         const appointmentsResponse = await axios.get('hospital_appointments');
         const appointments = appointmentsResponse.data;
+        console.log('取得した来院予定:', appointments);
         
         const previousAppointments = appointments.filter((app: HospitalAppointment) => {
           return app.id !== report.hospital_appointment_id && 
-                 dayjs(app.consultationDate).isBefore(dayjs(report.hospital_appointment.consultationDate));
+                 dayjs(app.consultationDate).isBefore(dayjs(currentAppointment.consultationDate));
         });
+        console.log('前回の来院予定:', previousAppointments);
         
         let conditionsResponse;
+        let apiUrl = '';
+        let params = {};
         
         if (previousAppointments.length === 0) {
-          conditionsResponse = await axios.get(`conditions/up_to_date`, {
-            params: { end_date: report.hospital_appointment.consultationDate }
-          });
+          console.log('初めての来院予定です。来院日までの全ての条件を取得します。');
+          apiUrl = 'conditions/up_to_date';
+          params = { end_date: currentAppointment.consultationDate };
+          
+          conditionsResponse = await axios.get(apiUrl, { params });
         } else {
           const latestPreviousAppointment = previousAppointments.sort((a: HospitalAppointment, b: HospitalAppointment) => {
             return dayjs(b.consultationDate).unix() - dayjs(a.consultationDate).unix();
           })[0];
+          console.log('前回の来院日:', latestPreviousAppointment.consultationDate);
           
-          conditionsResponse = await axios.get(`conditions/between_dates`, {
-            params: {
-              start_date: latestPreviousAppointment.consultationDate,
-              end_date: report.hospital_appointment.consultationDate
-            }
-          });
+          apiUrl = 'conditions/between_dates';
+          params = {
+            start_date: latestPreviousAppointment.consultationDate,
+            end_date: currentAppointment.consultationDate
+          };
+          
+          conditionsResponse = await axios.get(apiUrl, { params });
         }
+        
+        console.log('API呼び出し:', apiUrl, params);
+        console.log('取得した条件:', conditionsResponse.data);
         
         setPreviousConditions(conditionsResponse.data);
       } catch (error) {
         console.error('過去の条件の取得に失敗しました:', error);
+        setConditionsLoading(false);
       } finally {
         setConditionsLoading(false);
       }
     };
 
-    if (report && report.hospital_appointment) {
+    if (report) {
       fetchPreviousConditions();
     }
   }, [report, id]);
