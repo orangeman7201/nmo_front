@@ -28,9 +28,6 @@ export default function Reports() {
         setLoading(true);
         const appointmentsResponse = await axios.get('hospital_appointments');
         setHospitalAppointments(appointmentsResponse.data);
-
-        const reportsResponse = await axios.get('consultation_reports');
-        setConsultationReports(reportsResponse.data);
       } catch (error) {
         console.error('データの取得に失敗しました:', error);
       } finally {
@@ -41,13 +38,12 @@ export default function Reports() {
     fetchData();
   }, []);
 
-  const hasReport = (appointmentId: number) => {
-    return consultationReports.some(report => report.hospital_appointment_id === appointmentId);
+  const hasReport = (appointment: any) => {
+    return appointment.has_report === true;
   };
 
-  const getReportId = (appointmentId: number) => {
-    const report = consultationReports.find(report => report.hospital_appointment_id === appointmentId);
-    return report ? report.id : null;
+  const getReportId = (appointment: any) => {
+    return appointment.report_id;
   };
 
   const handleCreateReport = (appointmentId: number) => {
@@ -86,12 +82,12 @@ export default function Reports() {
                     {appointment.memo || '（メモなし）'}
                   </td>
                   <td className="py-3 px-6 text-center">
-                    {hasReport(appointment.id) ? (
+                    {hasReport(appointment) ? (
                       <button
-                        onClick={() => handleViewReport(getReportId(appointment.id)!)}
+                        onClick={() => handleViewReport(getReportId(appointment)!)}
                         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded"
                       >
-                        レポートを見る
+                        レポートを確認
                       </button>
                     ) : (
                       <button
