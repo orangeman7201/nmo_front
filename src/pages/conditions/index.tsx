@@ -16,7 +16,10 @@ export default function Home() {
   // コンポーネント内に移動
   const createCondition = (condition: Condition) => {
     axios.post('conditions', { condition }).then((response) => {
-      router.push('/conditions'); // window.location.hrefの代わりにrouter.pushを使用
+      setIsModalOpen(false); // モーダルを閉じる
+      axios.get('conditions', { params: { target_month: getTargetMonth() } }).then((response) => {
+        setConditions(response.data);
+      });
     }).catch((error) => {
       console.log(error);
     })
@@ -24,7 +27,10 @@ export default function Home() {
 
   const createHospitalAppointment = (hospitalAppointment: HospitalAppointment) => {
     axios.post('hospital_appointments', { hospital_appointment: hospitalAppointment }).then((response) => {
-      router.push('/conditions');
+      setIsModalOpen(false); // モーダルを閉じる
+      axios.get('hospital_appointments', { params: { target_month: getTargetMonth() } }).then((response) => {
+        setHospitalAppointments(response.data);
+      });
     }).catch((error) => {
       console.log(error);
     })

@@ -19,7 +19,12 @@ export default function ConditionModal(props: Props) {
           <input onChange={(e) => {
               setConditions({...condition, detail: e.target.value})
             }}
-            type="text" id="detail" className="condition_modal__input" placeholder="体調を入力してください" required />
+            type="text" 
+            id="detail" 
+            className="condition_modal__input" 
+            placeholder="体調を入力してください" 
+            value={condition.detail}
+            required />
         </div>
         <div className="mb-8">
           <label htmlFor="occurred-date" className="condition_modal__label">症状が起こった日付</label>
