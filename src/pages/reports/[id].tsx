@@ -88,10 +88,12 @@ export default function ReportDetail() {
         <div className="bg-white shadow-md rounded p-6 mb-6">
           <h2 className="text-xl font-semibold mb-4">来院情報</h2>
           <p className="mb-2">
-            <span className="font-medium">来院日:</span> {dayjs(report.hospital_appointment.consultationDate).format('YYYY年MM月DD日')}
+            <span className="font-medium">来院日:</span> {report.hospital_appointment && report.hospital_appointment.consultationDate ? 
+              dayjs(report.hospital_appointment.consultationDate).format('YYYY年MM月DD日') : '（日付なし）'}
           </p>
           <p className="mb-4">
-            <span className="font-medium">メモ:</span> {report.hospital_appointment.memo || '（メモなし）'}
+            <span className="font-medium">メモ:</span> {report.hospital_appointment && report.hospital_appointment.memo ? 
+              report.hospital_appointment.memo : '（メモなし）'}
           </p>
           
           <h2 className="text-xl font-semibold mb-4 mt-6">来院レポート</h2>
