@@ -163,7 +163,7 @@ export default function CreateReport() {
           <span className="font-medium">メモ:</span> {appointment?.memo || '（メモなし）'}
         </p>
         
-        {/* 過去の条件一覧 */}
+        {/* 過去の条件一覧 - 前回の来院から今回までの気になることを表示 */}
         <div className="mb-6">
           <h2 className="text-xl font-semibold mb-4">前回からの気になること</h2>
           
