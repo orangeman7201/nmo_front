@@ -51,7 +51,7 @@ export default function Reports() {
   };
 
   const handleViewReport = (reportId: number) => {
-    router.push(`/reports/${reportId}`);
+    router.push(`/reports/${reportId}/edit`);
   };
 
   return (
