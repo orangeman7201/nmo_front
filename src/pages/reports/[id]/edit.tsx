@@ -25,6 +25,7 @@ interface ConsultationReport {
   id: number;
   hospital_appointment_id: number;
   consultation_memo: string;
+  condition_summary: string;
   start_date: string;
   end_date: string;
   hospital_appointment: {
@@ -40,10 +41,12 @@ export default function EditReport() {
   const { id } = router.query;
   const [report, setReport] = useState<ConsultationReport | null>(null);
   const [consultationMemo, setConsultationMemo] = useState('');
+  const [conditionSummary, setConditionSummary] = useState('');
   const [previousConditions, setPreviousConditions] = useState<Condition[]>([]);
   const [loading, setLoading] = useState(true);
   const [conditionsLoading, setConditionsLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [generatingAiReport, setGeneratingAiReport] = useState(false);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
@@ -62,6 +65,11 @@ export default function EditReport() {
         } else {
           console.log('メモが見つかりません');
           setConsultationMemo('');
+        }
+        
+        if (response.data && response.data.condition_summary) {
+          console.log('設定するAI要約:', response.data.condition_summary);
+          setConditionSummary(response.data.condition_summary);
         }
       } catch (error) {
         console.error('レポートの取得に失敗しました:', error);
@@ -162,7 +170,8 @@ export default function EditReport() {
       setSubmitting(true);
       await axios.put(`consultation_reports/${id}`, {
         consultation_report: {
-          consultation_memo: consultationMemo
+          consultation_memo: consultationMemo,
+          condition_summary: conditionSummary
         }
       });
       
@@ -175,6 +184,41 @@ export default function EditReport() {
       setError('レポートの更新に失敗しました。');
     } finally {
       setSubmitting(false);
+    }
+  };
+  
+  const handleGenerateAiReport = async () => {
+    if (!id) {
+      setError('レポートIDが指定されていません。');
+      return;
+    }
+    
+    try {
+      setGeneratingAiReport(true);
+      setError('');
+      
+      const response = await axios.post(`consultation_reports/${id}/generate_ai_summary`);
+      
+      if (response.data && response.data.success) {
+        setConditionSummary(response.data.condition_summary);
+        setSuccessMessage(response.data.message || 'AI要約が生成されました。');
+        
+        if (report) {
+          setReport({
+            ...report,
+            condition_summary: response.data.condition_summary
+          });
+        }
+        
+        setTimeout(() => {
+          setSuccessMessage('');
+        }, 3000);
+      }
+    } catch (error) {
+      console.error('AI要約の生成に失敗しました:', error);
+      setError('AI要約の生成に失敗しました。');
+    } finally {
+      setGeneratingAiReport(false);
     }
   };
 
@@ -269,6 +313,35 @@ export default function EditReport() {
               placeholder="来院の内容や医師からのアドバイスなどを記入してください"
               required
             />
+          </div>
+          
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-2">
+              <label htmlFor="conditionSummary" className="block text-gray-700 text-sm font-bold">
+                気になることのAI要約
+              </label>
+              <button
+                type="button"
+                onClick={handleGenerateAiReport}
+                disabled={generatingAiReport || previousConditions.length === 0}
+                className={`bg-green-500 hover:bg-green-700 text-white text-sm font-bold py-1 px-3 rounded focus:outline-none focus:shadow-outline ${
+                  (generatingAiReport || previousConditions.length === 0) ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
+              >
+                {generatingAiReport ? '生成中...' : 'AIレポートを作成'}
+              </button>
+            </div>
+            <textarea
+              id="conditionSummary"
+              value={conditionSummary}
+              onChange={(e) => setConditionSummary(e.target.value)}
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              rows={4}
+              placeholder="AIによる気になることの要約がここに表示されます"
+            />
+            {previousConditions.length === 0 && (
+              <p className="text-sm text-gray-500 mt-1">※ 気になることが記録されていないため、AI要約を生成できません</p>
+            )}
           </div>
           
           <div className="flex items-center justify-between">
