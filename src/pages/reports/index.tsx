@@ -27,7 +27,8 @@ export default function Reports() {
       try {
         setLoading(true);
         const appointmentsResponse = await axios.get('hospital_appointments');
-        setHospitalAppointments(appointmentsResponse.data);
+        const hospitalAppointments = appointmentsResponse.data.map((item: any) => new HospitalAppointment(item));
+        setHospitalAppointments(hospitalAppointments);
       } catch (error) {
         console.error('データの取得に失敗しました:', error);
       } finally {

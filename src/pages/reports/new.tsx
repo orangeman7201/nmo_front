@@ -4,22 +4,10 @@ import React, { useEffect, useState } from 'react';
 import axios from '../../plugins/axios';
 import { useRouter } from 'next/router';
 import dayjs from 'dayjs';
+import HospitalAppointment from '../../forms/hospital_appointments';
+import Condition from '../../forms/conditions';
 
 const inter = Inter({ subsets: ["latin"] });
-
-interface HospitalAppointment {
-  id: number;
-  consultationDate: string;
-  memo: string;
-}
-
-interface Condition {
-  id: number;
-  detail: string;
-  occurred_date: string;
-  strength: number;
-  memo: string;
-}
 
 export default function CreateReport() {
   const router = useRouter();
@@ -39,7 +27,8 @@ export default function CreateReport() {
       try {
         setLoading(true);
         const response = await axios.get(`hospital_appointments/${appointment_id}`);
-        setAppointment(response.data);
+        const hospitalAppointment = new HospitalAppointment(response.data);
+        setAppointment(hospitalAppointment);
       } catch (error) {
         console.error('来院予定の取得に失敗しました:', error);
         setError('来院予定の取得に失敗しました。');
@@ -61,8 +50,8 @@ export default function CreateReport() {
         setConditionsLoading(true);
         
         const appointmentsResponse = await axios.get('hospital_appointments');
-        const appointments = appointmentsResponse.data;
-        
+        const appointments = appointmentsResponse.data.map((app: any) => new HospitalAppointment(app));
+
         const previousAppointments = appointments.filter((app: HospitalAppointment) => {
           return app.id !== Number(appointment_id) && 
                  dayjs(app.consultationDate).isBefore(dayjs(appointment.consultationDate));
@@ -87,7 +76,8 @@ export default function CreateReport() {
           });
         }
         
-        setPreviousConditions(conditionsResponse.data);
+        const conditions = conditionsResponse.data.map((condition: any) => new Condition(condition));
+        setPreviousConditions(conditions);
       } catch (error) {
         console.error('過去の条件の取得に失敗しました:', error);
       } finally {
@@ -184,7 +174,7 @@ export default function CreateReport() {
                   {previousConditions.map((condition) => (
                     <tr key={condition.id} className="border-b border-gray-200 hover:bg-gray-50">
                       <td className="py-3 px-6 text-left">
-                        {dayjs(condition.occurred_date).format('YYYY年MM月DD日')}
+                        {dayjs(condition.occurredDate).format('YYYY年MM月DD日')}
                       </td>
                       <td className="py-3 px-6 text-left">{condition.detail}</td>
                       <td className="py-3 px-6 text-center">{condition.strength}</td>
