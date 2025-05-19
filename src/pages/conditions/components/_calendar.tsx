@@ -1,4 +1,3 @@
-
 import dayjs, { Dayjs } from "dayjs";
 import Condition from '@/forms/conditions';
 import HospitalAppointment from '@/forms/hospital_appointments';
@@ -73,7 +72,9 @@ const hasCondition = (date: Dayjs, conditions: Array<Condition>) => {
 
 // 日付に診察日があるかどうかを判定する
 const hasHospitalAppointment = (date: Dayjs, hospitalAppointments: Array<HospitalAppointment>) => {
-  return hospitalAppointments.filter((ha: HospitalAppointment) => dayjs(ha.consultationDate).date() === dayjs(date).date()).length > 0;
+  return hospitalAppointments.filter((ha: HospitalAppointment) =>
+    dayjs(ha.consultationDate).format('YYYY-MM-DD') == date.format('YYYY-MM-DD')
+  ).length > 0;
 }
 
 interface Props {

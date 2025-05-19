@@ -42,7 +42,9 @@ export default function Home() {
       }, 3000);
       
       axios.get('hospital_appointments', { params: { target_month: getTargetMonth() } }).then((response) => {
-        setHospitalAppointments(response.data);
+        // レスポンスデータを HospitalAppointment インスタンスの配列に変換
+        const appointments = response.data.map((item: any) => new HospitalAppointment(item));
+        setHospitalAppointments(appointments);
       });
     }).catch((error) => {
       console.log(error);
@@ -55,7 +57,7 @@ export default function Home() {
   }
 
   const [conditions, setConditions] = useState(Array<Condition>);
-  const [hospitalAppointment, setHospitalAppointments] = useState(Array<HospitalAppointment>);
+  const [hospitalAppointment, setHospitalAppointments] = useState<Array<HospitalAppointment>>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalDate, setModalDate] = useState<Dayjs | null>(null);
 
@@ -70,7 +72,9 @@ export default function Home() {
       setConditions(response.data);
     });
     axios.get('hospital_appointments', { params: { target_month: getTargetMonth() } } ).then((response) => {
-      setHospitalAppointments(response.data);
+      // レスポンスデータを HospitalAppointment インスタンスの配列に変換
+      const appointments = response.data.map((item: any) => new HospitalAppointment(item));
+      setHospitalAppointments(appointments);
     });
   }, [])
 
